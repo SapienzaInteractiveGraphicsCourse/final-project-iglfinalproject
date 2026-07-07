@@ -69,8 +69,8 @@ const DIFFICOLTA = {
 let temaAttuale = 'cyberpunk';
 let difficoltaAttuale = 'facile';
 
-// Setup ambiente camera e luci
 
+// Setup ambiente camera e luci
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(TEMI[temaAttuale].sfondo);
 
@@ -85,6 +85,7 @@ document.body.appendChild(renderer.domElement);
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.target.set(0, 1, 0);
 
+
 // Setup parametri di navigazione della camera
 // per permettere di poter girare intorno e zoommare
 controls.enableDamping = true;   
@@ -92,15 +93,18 @@ controls.dampingFactor = 0.05;
 controls.minDistance = 3;        
 controls.maxDistance = 20;
 
+
 // Illuminazione della Scena
 // Luce anìmbientale
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
 scene.add(ambientLight);
 
+
 const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
 dirLight.position.set(5, 10, 5);
 dirLight.castShadow = true;
 scene.add(dirLight);
+
 
 // Spotlight sopra il braccio
 const spotLight = new THREE.SpotLight(0xffffff, 40);
@@ -155,10 +159,12 @@ tavolo.position.y = -0.1;
 tavolo.receiveShadow = true;
 scene.add(tavolo);
 
+
 // Griglia sopra la texture
 let griglia = new THREE.GridHelper(10, 10, 0x333338, 0x333338);
 griglia.position.y = 0.01;
 scene.add(griglia);
+
 
 // Creazione perimetro led del tavolo
 let perimetroLedGroup = new THREE.Group();
@@ -198,10 +204,12 @@ function costruisciPerimetroLed() {
 }
 costruisciPerimetroLed();
 
+
 // Creazione dei pali led verticali che partono dai 4 angoli del tavolo
 // Gruppo che conterrà i 4 pali neon e le loro luci associate
 const gruppoNeonVerticali = new THREE.Group();
 scene.add(gruppoNeonVerticali);
+
 
 // Array per salvare i riferimenti alle 4 luci, così da poterne cambiare il colore nel tema
 let luciNeonVerticali = [];
@@ -247,12 +255,14 @@ function costruisciPaliNeon() {
 }
 costruisciPaliNeon();
 
+
 // Creazione struttura gerarchica del braccio robot
 const geoBase = new THREE.CylinderGeometry(0.8, 0.9, 0.3, 32);
 const baseRobot = new THREE.Mesh(geoBase, matRobot);
 baseRobot.position.y = 0.15;
 baseRobot.castShadow = true;
 scene.add(baseRobot);
+
 
 // braccio inferiore
 const geoBraccio1 = new THREE.CylinderGeometry(0.20, 0.20, 2.5, 16);
@@ -262,11 +272,13 @@ braccioInferiore.position.y = 0.15;
 braccioInferiore.castShadow = true;
 baseRobot.add(braccioInferiore);
 
+
 // congiunzione braccia
 const geoSferaSnodo = new THREE.SphereGeometry(0.20, 24, 24);
 const snodoCentrale = new THREE.Mesh(geoSferaSnodo, matRobot);
 snodoCentrale.position.y = 2.5; 
 braccioInferiore.add(snodoCentrale);
+
 
 // braccio superiore
 const geoBraccio2 = new THREE.CylinderGeometry(0.20, 0.20, 2.0, 16);
@@ -275,6 +287,7 @@ const braccioSuperiore = new THREE.Mesh(geoBraccio2, matRobot);
 braccioSuperiore.castShadow = true;
 snodoCentrale.add(braccioSuperiore); 
 
+
 // congiunzione braccio e mano
 const geoPolso = new THREE.CylinderGeometry(0.15, 0.20, 0.2, 16);
 geoPolso.translate(0, 0.1, 0); 
@@ -282,10 +295,12 @@ const polso = new THREE.Mesh(geoPolso, matRobot);
 polso.position.y = 2.0; 
 braccioSuperiore.add(polso);
 
+
 // mano del braccio
 const calamita = new THREE.Group();
 calamita.position.y = 0.2; 
 polso.add(calamita);
+
 
 // costruzione 3 dita per la presa meccanica
 const dita = [];
@@ -304,12 +319,14 @@ for (let i = 0; i < 3; i++) {
     dita.push(ditoMesh); 
 }
 
+
 // Collegamento con l'interfaccia html per la gestione del gioco
 // comprende gestione dei punti, selezione dei temi e della difficoltà
 const elPunti = document.getElementById('txt-punti');
 const elTempo = document.getElementById('txt-tempo');
 const elPannello = document.getElementById('pannello-ui');
 let giocoAvviato = false;
+
 
 // radio button per la selezione della difficoltà
 const elRadioDiff = document.querySelectorAll('input[name="diff"]');
@@ -321,6 +338,7 @@ elRadioDiff.forEach(radio => {
         }
     });
 });
+
 
 // radio button del cambio tema
 // il cambio del tema prevede anche il cambio delle texture per le palline 
@@ -379,6 +397,7 @@ elRadioTemi.forEach(radio => {
     });
 });
 
+
 // Gestione Pulsante START
 const elBtnStart = document.getElementById('btn-start');
 if (elBtnStart) {
@@ -409,16 +428,19 @@ if (elBtnStart) {
     });
 }
 
+
 // Logica del gioco
 let bersagli = []; 
 let punteggio = 0, tempoRimasto = 30.0, gameOver = false;
 let dirX = 1, dirZ = 1;
 const clock = new THREE.Clock();
 
+
 // aggiunta delle posizioni per la mano e lo snodo del braccio 
 // per far si che non possano oltrepassare la superfice del tavolo
 const posizioneCalamitaMondo = new THREE.Vector3();
 const posizioneSnodoMondo = new THREE.Vector3();
+
 
 function generaBersaglio() {
     
@@ -459,13 +481,16 @@ function generaBersaglio() {
 }
 generaBersaglio();
 
+
 // Mapping degli input da tastiera, i comandi per poter giocare
 const tasti = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false, KeyW: false, KeyS: false };
 window.addEventListener('keydown', (e) => { if (e.code in tasti) tasti[e.code] = true; });
 window.addEventListener('keyup', (e) => { if (e.code in tasti) tasti[e.code] = false; });
 
+
 // Loop di animazione e rendering
 function animate() {
+
     requestAnimationFrame(animate);
     if (gameOver) return;
 
