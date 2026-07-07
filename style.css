@@ -1,0 +1,160 @@
+/* Reset di base */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Evita le barre di scorrimento con il canvas */
+    background-color: #111116;
+    font-family: 'Courier New', Courier, monospace; /* Stile terminale/retro */
+}
+
+/* Pannello principale posizionato sopra il canvas */
+#pannello-ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: #ffffff;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #555555;
+    width: 280px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    pointer-events: auto; /* Permette di cliccare sui menu */
+    z-index: 10;
+}
+
+#titolo-ui {
+    margin: 0 0 10px 0;
+    color: #00ffcc;
+    letter-spacing: 1px;
+}
+
+#statistiche {
+    font-size: 16px;
+}
+
+.separatore {
+    border: 0;
+    border-top: 1px solid #444444;
+    margin: 15px 0;
+}
+
+.sezione-ui {
+    margin-bottom: 15px;
+}
+
+/* Dropdown styling */
+select {
+    width: 100%;
+    background: #222222;
+    color: #ffffff;
+    border: 1px solid #555555;
+    padding: 6px;
+    border-radius: 4px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* Pulsanti dei temi */
+.gruppo-bottoni {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.btn-tema {
+    border: 0;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 11px;
+    transition: transform 0.1s;
+}
+
+.btn-tema:hover {
+    transform: scale(1.05);
+}
+
+.btn-cyber { background-color: #00d2ff; color: #000000; }
+.btn-indy  { background-color: #ffcc00; color: #000000; }
+.btn-retro { background-color: #ff007f; color: #ffffff; }
+
+/* Schermata di Game Over dinamica */
+.game-over-title {
+    color: #ff3333;
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.gruppo-radio {
+    margin-top: 8px;
+    text-align: left;
+}
+
+.gruppo-radio label {
+    display: inline-block;
+    margin-bottom: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.gruppo-radio input[type="radio"] {
+    margin-right: 8px;
+    cursor: pointer;
+    accent-color: #00ffcc; /* Colora il pallino del radio button con il ciano del gioco */
+}
+
+.gruppo-radio label:hover {
+    color: #00ffcc;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Stile per il riquadro delle istruzioni posizionato a DESTRA */
+#istruzioni-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px; /* Spostato sul lato destro */
+    width: 320px; /* Larghezza fissa simile al pannello di sinistra */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    z-index: 10;
+    pointer-events: auto; /* Permette l'interazione se serve, ma non blocca il resto dello schermo */
+}
+
+.box-istruzioni {
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #555555;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    text-align: center;
+}
+
+.box-istruzioni h2 {
+    color: #00ffcc;
+    margin-top: 0;
+    letter-spacing: 1px;
+    font-size: 16px;
+}
+
+.tabella-comandi {
+    width: 100%;
+    margin-top: 12px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabella-comandi td {
+    padding: 6px;
+    border-bottom: 1px solid #333338;
+    font-size: 13px;
+}

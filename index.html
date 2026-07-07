@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progetto Interactive Graphics - Lampada Curiosa</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #000; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./libs/threejs/build/three.module.js",
+                "three/addons/": "./libs/threejs/jsm/",
+                "@tweenjs/tween.js": "./libs/tweenjs/dist/tween.esm.js"
+            }
+        }
+    </script>
+
+    <div id="pannello-ui">
+        <h3 id="titolo-ui">PANNELLO DI CONTROLLO</h3>
+        <div id="statistiche">
+            <strong>Punti:</strong> <span id="txt-punti">0</span> | 
+            <strong>Tempo:</strong> <span id="txt-tempo">30.0</span>s
+        </div>
+        
+        <button id="btn-start" style="width: 100%; margin-top: 10px; padding: 8px; font-weight: bold; background-color: #00ffcc; color: #000; border: none; border-radius: 4px; cursor: pointer; font-family: inherit;">
+            START GIOCO
+        </button>
+
+        <div id="game-over-ui" class="hidden" style="margin-top: 15px; text-align: center;">
+            <h2 class="game-over-title">GAME OVER</h2>
+            <strong>Punti finali:</strong> <span id="txt-punti-finali">0</span><br><br>
+            <button onclick="window.location.reload()" style="width: 100%; padding: 8px; font-weight: bold; background-color: #00ffcc; color: #000; border: none; border-radius: 4px; cursor: pointer; font-family: inherit;">
+                GIOCA ANCORA
+            </button>
+        </div>
+
+        <hr class="separatore">
+
+        <div id="diff-ui" class="sezione-ui">
+            <label><strong>Difficoltà:</strong></label><br>
+            <div class="gruppo-radio">
+                <label><input type="radio" name="diff" value="facile" checked> Facile</label><br>
+                <label><input type="radio" name="diff" value="medio"> Medio</label><br>
+                <label><input type="radio" name="diff" value="difficile"> Difficile</label>
+            </div>
+        </div>
+
+        <hr class="separatore">
+
+        <div id="theme-ui" class="sezione-ui">
+            <label><strong>Set Colori (Tema):</strong></label><br>
+            <div class="gruppo-radio">
+                <label><input type="radio" name="tema" value="cyberpunk" checked> Cyberpunk</label><br>
+                <label><input type="radio" name="tema" value="industrial"> Industrial</label><br>
+                <label><input type="radio" name="tema" value="retrowave"> RetroWave</label>
+            </div>
+        </div>
+        </div> <div id="istruzioni-overlay">
+        <div class="box-istruzioni">
+            <h2>COME GIOCARE</h2>
+            <p>Usa i comandi della tastiera per muovere il braccio robotico e accalappiare la sferetta impazzita prima che scada il tempo!</p>
+            
+            <table class="tabella-comandi">
+                <tr>
+                    <td><strong>Freccia DESTRA / SINISTRA</strong></td>
+                    <td>Ruota la base del robot</td>
+                </tr>
+                <tr>
+                    <td><strong>Freccia SU / GIÙ</strong></td>
+                    <td>Muove il braccio inferiore</td>
+                </tr>
+                <tr>
+                    <td><strong>Tasto W / S</strong></td>
+                    <td>Muove il braccio superiore</td>
+                </tr>
+            </table>
+            
+            <p style="color: #00ffcc; margin-top: 20px; font-weight: bold;">Seleziona la difficoltà e il tema nel pannello a sinistra, poi clicca su START per iniziare!</p>
+        </div>
+    </div>
+    </div> <script type="module" src="main.js"></script>
+
+</body>
+</html>
