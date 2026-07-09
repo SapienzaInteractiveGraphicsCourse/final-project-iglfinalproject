@@ -400,6 +400,7 @@ elRadioTemi.forEach(radio => {
 
 // Gestione Pulsante START
 const elBtnStart = document.getElementById('btn-start');
+const elBtnStop = document.getElementById('btn-stop');
 if (elBtnStart) {
     elBtnStart.addEventListener('click', () => {
         giocoAvviato = true;
@@ -409,6 +410,7 @@ if (elBtnStart) {
         
         // Nasconde il pulsante start
         elBtnStart.classList.add('hidden');
+        if (elBtnStop) elBtnStop.classList.remove('hidden'); // Mostra STOP
         
         // Fa sparire il riquadro delle istruzioni
         const elIstruzioni = document.getElementById('istruzioni-overlay');
@@ -425,6 +427,25 @@ if (elBtnStart) {
         separatori.forEach(sep => sep.classList.add('hidden'));
 
         generaBersaglio();
+    });
+}
+
+// Gestione pulsante STOP
+if (elBtnStop) {
+    elBtnStop.addEventListener('click', () => {
+        giocoAvviato = false;
+        elBtnStop.classList.add('hidden'); // Nasconde se stesso
+        if (elBtnStart) elBtnStart.classList.remove('hidden'); // Rimostra START
+        
+        // Mostra di nuovo le impostazioni e le istruzioni per poter ripartire
+        const elIstruzioni = document.getElementById('istruzioni-overlay');
+        if (elIstruzioni) elIstruzioni.classList.remove('hidden');
+        const elDiffUi = document.getElementById('diff-ui');
+        const elThemeUi = document.getElementById('theme-ui');
+        if (elDiffUi) elDiffUi.classList.remove('hidden');
+        if (elThemeUi) elThemeUi.classList.remove('hidden');
+        const separatori = document.querySelectorAll('.separatore');
+        separatori.forEach(sep => sep.classList.remove('hidden'));
     });
 }
 
@@ -466,7 +487,20 @@ function generaBersaglio() {
         const nuovaPallina = new THREE.Mesh(geoB, matSferetta);
         nuovaPallina.castShadow = true;
 
-        nuovaPallina.position.set((Math.random() - 0.5) * 8, raggioVariato, (Math.random() - 0.5) * 8);
+        let posX, posZ, distDallaBase;
+        const raggioBaseRobot = 0.9; 
+        const margineSicurezza = raggioBaseRobot + raggioVariato + 0.3; 
+
+        do {
+            // Estrae coordinate su tutto il quadrato del tavolo
+            posX = (Math.random() - 0.5) * 9; 
+            posZ = (Math.random() - 0.5) * 9;
+            
+            // Controlla la distanza dal centro (0,0) per evitare la base
+            distDallaBase = Math.sqrt(posX ** 2 + posZ ** 2);
+        } while (distDallaBase < margineSicurezza);
+
+        nuovaPallina.position.set(posX, raggioVariato, posZ);
 
         nuovaPallina.userData = {
             dirX: Math.random() > 0.5 ? 1 : -1,
@@ -552,6 +586,21 @@ function animate() {
             // Rimbalzi sui bordi del tavolo
             if (Math.abs(b.position.x) > 4.5) b.userData.dirX *= -1;
             if (Math.abs(b.position.z) > 4.5) b.userData.dirZ *= -1;
+
+            // Rimbalzo sulla base del braccio robotico al centro
+            const distDallaBase = Math.sqrt(b.position.x ** 2 + b.position.z ** 2);
+            const raggioBaseRobot = 0.9; 
+            const distanzaMinima = raggioBaseRobot + b.userData.raggioCollisione;
+
+            if (distDallaBase < distanzaMinima) {
+                // Inverte la direzione della pallina (rimbalzo)
+                b.userData.dirX *= -1;
+                b.userData.dirZ *= -1;
+                
+                // Sposta leggermente la pallina fuori per non farla incastrare nel frame successivo
+                b.position.x += b.userData.velocita * b.userData.dirX * 1.5;
+                b.position.z += b.userData.velocita * b.userData.dirZ * 1.5;
+            }
         });
     }
 
