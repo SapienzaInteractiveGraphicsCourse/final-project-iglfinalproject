@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as TWEEN from '@tweenjs/tween.js';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -329,7 +328,7 @@ piastraBaseDest.position.set(0.35, altezzaTotaleBase + 0.25, 0);
 piastraBaseDest.castShadow = true;
 gruppoBase.add(piastraBaseDest);
 
-const geoPernoInf = new THREE.CylinderGeometry(0.12, 0.12, 0.85, 24);
+const geoPernoInf = new THREE.CylinderGeometry(0.12, 0.12, 0.80, 24);
 geoPernoInf.rotateZ(Math.PI / 2); 
 const pernoInferioreMesh = new THREE.Mesh(geoPernoInf, matMetalloChiaro);
 pernoInferioreMesh.position.set(0, altezzaTotaleBase + 0.25, 0); 
@@ -696,8 +695,8 @@ function animate() {
     const vRotSup = braccioSuperiore.rotation.x;
 
     // Rotazione della base a destra e sinistra (Asse Y globale)
-    if (tasti.ArrowLeft)  gruppoBase.rotation.y += 0.04;
-    if (tasti.ArrowRight) gruppoBase.rotation.y -= 0.04;
+    if (tasti.ArrowRight)  gruppoBase.rotation.y += 0.04;
+    if (tasti.ArrowLeft) gruppoBase.rotation.y -= 0.04;
     
     // Piegamento delle braccia avanti e indietro (Asse X locale dei perni)
     if (tasti.ArrowUp)    braccioInferiore.rotation.x += 0.03;
@@ -773,12 +772,18 @@ function animate() {
                         // Apertura morbida verso l'esterno
                         new TWEEN.Tween(d.position, true).to({ x: 0.2, y: 0.025}, 70).easing(TWEEN.Easing.Quadratic.Out).start();
                         new TWEEN.Tween(d.rotation, true).to({ z: -Math.PI / 1.2 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+
+
+                        setTimeout(() => {
+                            new TWEEN.Tween(d.position, true).to({ x: 0.08, y: 0.05 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+                            new TWEEN.Tween(d.rotation, true).to({ z: -Math.PI / 2.75 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+                        }, 400);
                         
                         // Chiusura morbida (ritorno alla posizione base)
                         setTimeout(() => {
                             new TWEEN.Tween(d.position, true).to({ x: 0.12, y: 0.05 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
                             new TWEEN.Tween(d.rotation, true).to({ z: -Math.PI / 1.5 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
-                        }, 600);
+                        }, 1000);
                     });
 
         
@@ -801,11 +806,11 @@ function animate() {
                 
                 // Solo la pallina catturata si muove seguendo la mano, le altre svaniscono ferme
                 if (b.userData.faseAnimazione === 'assorbimento') {
-                    b.position.copy(posizioneCalamitaMondo-5);
+                    b.position.copy(posizioneCalamitaMondo);
                 }
                 
                 // Rimpicciolimento simultaneo per tutte le palline
-                b.scale.multiplyScalar(0.80);
+                b.scale.multiplyScalar(0.9);
                 
                 if (b.scale.x < 0.05) {
                     scene.remove(b);
