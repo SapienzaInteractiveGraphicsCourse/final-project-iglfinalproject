@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import * as TWEEN from '@tweenjs/tween.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -31,6 +32,10 @@ const texColorPallaRetro = textureLoader.load('textures/onyx/Onyx010_2K-JPG_Colo
 const texNormalPallaRetro = textureLoader.load('textures/onyx/Onyx010_2K-JPG_NormalGL.jpg');
 const texRoughPallaRetro = textureLoader.load('textures/onyx/Onyx010_2K-JPG_Roughness.jpg');
 
+texColorPallaCyber.colorSpace = THREE.SRGBColorSpace;
+texColorPallaInd.colorSpace = THREE.SRGBColorSpace;
+texColorPallaRetro.colorSpace = THREE.SRGBColorSpace;
+
 // Applichazione del wrapping a tutte
 [texColorPallaCyber, texNormalPallaCyber, texRoughPallaCyber,
  texColorPallaInd, texNormalPallaInd, texRoughPallaInd,
@@ -41,7 +46,7 @@ const texRoughPallaRetro = textureLoader.load('textures/onyx/Onyx010_2K-JPG_Roug
 
 
 // Texture per il tavolo (pavimento)
-const texColorTavolo = textureLoader.load('textures/metal_table/Metal009_2K-JPG_Roughness.jpg');
+const texColorTavolo = textureLoader.load('textures/metal_table/Metal009_2K-JPG_Color.jpg');
 const texNormalTavolo = textureLoader.load('textures/metal_table/Metal009_2K-JPG_NormalGL.jpg');
 const texRoughnessTavolo = textureLoader.load('textures/metal_table/Metal009_2K-JPG_Roughness.jpg');
 
@@ -80,6 +85,12 @@ camera.position.set(0, 6, 9);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
+
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+const pmrem = new THREE.PMREMGenerator(renderer);
+
+
 document.body.appendChild(renderer.domElement);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -95,8 +106,8 @@ controls.maxDistance = 20;
 
 
 // Illuminazione della Scena
-// Luce anìmbientale
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
+// Luce ambientale
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
 
@@ -130,6 +141,14 @@ const matRobot = new THREE.MeshStandardMaterial({
     //color: TEMI[temaAttuale].braccio     
 });
 
+// Materiale per dettagli braccio robotico
+const matMetalloChiaro = new THREE.MeshStandardMaterial({ 
+    color: 0xBEC7CC,       
+    metalness: 0.5,        
+    roughness: 0.2,        
+    emissive: 0x101214,    
+    emissiveIntensity: 0.4
+});
 
 // materiale del tavolo
 const matTavolo = new THREE.MeshStandardMaterial({ 
@@ -147,7 +166,9 @@ const matSferetta = new THREE.MeshStandardMaterial({
     normalMap: texNormalPallaCyber,
     normalScale: new THREE.Vector2(0.2, 0.2),
     roughnessMap: texRoughPallaCyber,
-    color: 0xffffff // Bianco di base così non altera i colori originali della texture delle palline
+    color: 0xffffff, // Bianco di base così non altera i colori originali della texture delle palline
+    metalness: 0.1,
+    roughness: 0.3  
 });
 
 
@@ -257,68 +278,174 @@ costruisciPaliNeon();
 
 
 // Creazione struttura gerarchica del braccio robot
-const geoBase = new THREE.CylinderGeometry(0.8, 0.9, 0.3, 32);
-const baseRobot = new THREE.Mesh(geoBase, matRobot);
-baseRobot.position.y = 0.15;
-baseRobot.castShadow = true;
-scene.add(baseRobot);
+// Base meccanica a cerchi concentrici
+const gruppoBase = new THREE.Group();
+scene.add(gruppoBase);
 
+gruppoBase.rotation.y = Math.PI;
 
-// braccio inferiore
-const geoBraccio1 = new THREE.CylinderGeometry(0.20, 0.20, 2.5, 16);
-geoBraccio1.translate(0, 1.25, 0); 
-const braccioInferiore = new THREE.Mesh(geoBraccio1, matRobot);
-braccioInferiore.position.y = 0.15;
-braccioInferiore.castShadow = true;
-baseRobot.add(braccioInferiore);
+const geoGradone1 = new THREE.CylinderGeometry(1.2, 1.3, 0.1, 32);
+const gradone1 = new THREE.Mesh(geoGradone1, matMetalloChiaro);
+gradone1.position.y = 0.05; 
+gradone1.castShadow = true; gradone1.receiveShadow = true;
+gruppoBase.add(gradone1);
 
+const geoGradone2 = new THREE.CylinderGeometry(0.9, 0.9, 0.25, 32);
+const gradone2 = new THREE.Mesh(geoGradone2, matRobot);
+gradone2.position.y = 0.225; 
+gradone2.castShadow = true; gradone2.receiveShadow = true;
+gruppoBase.add(gradone2);
 
-// congiunzione braccia
-const geoSferaSnodo = new THREE.SphereGeometry(0.20, 24, 24);
-const snodoCentrale = new THREE.Mesh(geoSferaSnodo, matRobot);
-snodoCentrale.position.y = 2.5; 
+const geoGradone3 = new THREE.CylinderGeometry(0.95, 0.95, 0.05, 32);
+const gradone3 = new THREE.Mesh(geoGradone3, matMetalloChiaro);
+gradone3.position.y = 0.375; 
+gradone3.castShadow = true; gradone3.receiveShadow = true;
+gruppoBase.add(gradone3);
+
+const geoGradone4 = new THREE.CylinderGeometry(0.65, 0.65, 0.25, 32);
+const gradone4 = new THREE.Mesh(geoGradone4, matRobot);
+gradone4.position.y = 0.525; 
+gradone4.castShadow = true; gradone4.receiveShadow = true;
+gruppoBase.add(gradone4);
+
+const geoGradone5 = new THREE.CylinderGeometry(0.55, 0.55, 0.1, 32);
+const gradone5 = new THREE.Mesh(geoGradone5, matMetalloChiaro);
+gradone5.position.y = 0.70; 
+gradone5.castShadow = true; gradone5.receiveShadow = true;
+gruppoBase.add(gradone5);
+
+const altezzaTotaleBase = 0.75;
+
+// Snodo inferiore
+// Piastre quadrate e perno cilindrico
+const geoPiastraBase = new THREE.BoxGeometry(0.15, 0.5, 0.5);
+const piastraBaseSian = new THREE.Mesh(geoPiastraBase, matRobot);
+piastraBaseSian.position.set(-0.35, altezzaTotaleBase + 0.25, 0); 
+piastraBaseSian.castShadow = true;
+gruppoBase.add(piastraBaseSian);
+
+const piastraBaseDest = new THREE.Mesh(geoPiastraBase, matRobot);
+piastraBaseDest.position.set(0.35, altezzaTotaleBase + 0.25, 0);  
+piastraBaseDest.castShadow = true;
+gruppoBase.add(piastraBaseDest);
+
+const geoPernoInf = new THREE.CylinderGeometry(0.12, 0.12, 0.85, 24);
+geoPernoInf.rotateZ(Math.PI / 2); 
+const pernoInferioreMesh = new THREE.Mesh(geoPernoInf, matMetalloChiaro);
+pernoInferioreMesh.position.set(0, altezzaTotaleBase + 0.25, 0); 
+pernoInferioreMesh.castShadow = true;
+gruppoBase.add(pernoInferioreMesh);
+
+const braccioInferiore = new THREE.Group();
+braccioInferiore.position.set(0, altezzaTotaleBase + 0.25, 0); 
+gruppoBase.add(braccioInferiore);
+
+// Braccio inferiore
+// Due piastre rettangolari laterali
+const altezzaBraccio1 = 1.75;
+const geoPiastraBraccio1 = new THREE.BoxGeometry(0.10, altezzaBraccio1, 0.35);
+geoPiastraBraccio1.translate(0, altezzaBraccio1 / 2, 0); 
+
+const piastraInfSinistra = new THREE.Mesh(geoPiastraBraccio1, matRobot);
+piastraInfSinistra.position.x = -0.20; 
+piastraInfSinistra.castShadow = true;
+braccioInferiore.add(piastraInfSinistra);
+
+const piastraInfDestra = new THREE.Mesh(geoPiastraBraccio1, matRobot);
+piastraInfDestra.position.x = 0.20;  
+piastraInfDestra.castShadow = true;
+braccioInferiore.add(piastraInfDestra);
+
+// Snodo centrale
+// Perno cilindrico orizzontale
+const geoSnodoCilindrico = new THREE.CylinderGeometry(0.12, 0.12, 0.55, 24);
+geoSnodoCilindrico.rotateZ(Math.PI / 2); 
+const snodoCentrale = new THREE.Mesh(geoSnodoCilindrico, matMetalloChiaro);
+snodoCentrale.position.y = altezzaBraccio1; 
+snodoCentrale.castShadow = true;
 braccioInferiore.add(snodoCentrale);
 
+// Braccio superiore
+const braccioSuperiore = new THREE.Group();
+braccioSuperiore.position.set(0, altezzaBraccio1, 0);
+braccioInferiore.add(braccioSuperiore);
 
-// braccio superiore
-const geoBraccio2 = new THREE.CylinderGeometry(0.20, 0.20, 2.0, 16);
-geoBraccio2.translate(0, 1.0, 0); 
-const braccioSuperiore = new THREE.Mesh(geoBraccio2, matRobot);
-braccioSuperiore.castShadow = true;
-snodoCentrale.add(braccioSuperiore); 
+const altezzaBraccio2 = 2.0;
+const geoBraccio2Pieno = new THREE.BoxGeometry(0.26, altezzaBraccio2, 0.25);
+geoBraccio2Pieno.translate(0, altezzaBraccio2 / 2, 0); 
 
-
-// congiunzione braccio e mano
-const geoPolso = new THREE.CylinderGeometry(0.15, 0.20, 0.2, 16);
-geoPolso.translate(0, 0.1, 0); 
-const polso = new THREE.Mesh(geoPolso, matRobot);
-polso.position.y = 2.0; 
-braccioSuperiore.add(polso);
+const braccioSuperioreMesh = new THREE.Mesh(geoBraccio2Pieno, matRobot);
+braccioSuperioreMesh.castShadow = true;
+braccioSuperiore.add(braccioSuperioreMesh);
 
 
-// mano del braccio
+const geoStaffaPolso = new THREE.BoxGeometry(0.32, 0.2, 0.25);
+const staffaPolso = new THREE.Mesh(geoStaffaPolso, matRobot);
+staffaPolso.position.y = altezzaBraccio2; 
+staffaPolso.castShadow = true;
+braccioSuperiore.add(staffaPolso);
+
+// Snodo polso
+const geoPernoPolso = new THREE.CylinderGeometry(0.08, 0.08, 0.55, 16);
+geoPernoPolso.rotateZ(Math.PI / 2); 
+const pernoPolsoMesh = new THREE.Mesh(geoPernoPolso, matMetalloChiaro);
+pernoPolsoMesh.position.y = altezzaBraccio2;
+pernoPolsoMesh.castShadow = true;
+braccioSuperiore.add(pernoPolsoMesh);
+
+// Costruzione della mano
 const calamita = new THREE.Group();
-calamita.position.y = 0.2; 
-polso.add(calamita);
+calamita.position.set(0, altezzaBraccio2, 0); 
+braccioSuperiore.add(calamita);
 
+// Le due piastre laterali del perno del polso
+const geoPiastraMano = new THREE.BoxGeometry(0.06, 0.3, 0.2);
 
-// costruzione 3 dita per la presa meccanica
+const piastraManoSinistra = new THREE.Mesh(geoPiastraMano, matRobot);
+piastraManoSinistra.position.set(-0.2, 0.15, 0); 
+piastraManoSinistra.castShadow = true;
+calamita.add(piastraManoSinistra);
+
+const piastraManoDestra = new THREE.Mesh(geoPiastraMano, matRobot);
+piastraManoDestra.position.set(0.2, 0.15, 0);
+piastraManoDestra.castShadow = true;
+calamita.add(piastraManoDestra);
+
+// Base rotonda mano che cogiunge le piastre e la mano
+const geoCongiunzione = new THREE.CylinderGeometry(0.25, 0.25, 0.05, 24);
+const congiunzioneMano = new THREE.Mesh(geoCongiunzione, matRobot);
+congiunzioneMano.position.y = 0.325; 
+congiunzioneMano.castShadow = true;
+calamita.add(congiunzioneMano);
+
+// Struttura esagonale della mano
+const geoAttuatoreMano = new THREE.CylinderGeometry(0.175, 0.25, 0.25, 6);
+const attuatoreMano = new THREE.Mesh(geoAttuatoreMano, matRobot);
+attuatoreMano.position.y = 0.425; 
+attuatoreMano.castShadow = true;
+calamita.add(attuatoreMano);
+
+// Costruzione dei ganci e delle dita
 const dita = [];
-const geoDito = new THREE.TorusGeometry(0.20, 0.04, 12, 24, Math.PI / 1.5);
+const geoDito = new THREE.TorusGeometry(0.16, 0.04, 12, 24, Math.PI / 1.125);
+
 for (let i = 0; i < 3; i++) {
     const ancoraggioDito = new THREE.Group();
+    // Posizione delle dita per essere equidistanti
     ancoraggioDito.rotation.y = (i * Math.PI * 2) / 3;
-    ancoraggioDito.position.y = 0.15; 
-    polso.add(ancoraggioDito);
     
-    const ditoMesh = new THREE.Mesh(geoDito, matRobot);
-    ditoMesh.position.set(0.04, 0.20, 0); 
-    ditoMesh.rotation.z = -Math.PI / 2; 
+    ancoraggioDito.position.y = 0.6; 
+    calamita.add(ancoraggioDito);
+    
+    // Il dito curvo applicato alla fine del gancio
+    const ditoMesh = new THREE.Mesh(geoDito, matMetalloChiaro);
+    ditoMesh.position.set(0.12, 0.05, 0); 
+    ditoMesh.rotation.z = -Math.PI / 1.5; 
+    ditoMesh.castShadow = true;
     
     ancoraggioDito.add(ditoMesh);
     dita.push(ditoMesh); 
 }
-
 
 // Collegamento con l'interfaccia html per la gestione del gioco
 // comprende gestione dei punti, selezione dei temi e della difficoltà
@@ -452,6 +579,9 @@ if (elBtnStop) {
 
 // Logica del gioco
 let bersagli = []; 
+
+let bersagliPresi = [];
+
 let punteggio = 0, tempoRimasto = 30.0, gameOver = false;
 let dirX = 1, dirZ = 1;
 const clock = new THREE.Clock();
@@ -545,7 +675,10 @@ function animate() {
         gameOver = true;
         giocoAvviato = false;
         
-        // Mostra il blocco di game over e assegna i punti
+        // Nasconde lo STOP e ripristina lo START al termine del tempo
+        if (elBtnStop) elBtnStop.classList.add('hidden');
+
+        // Mostra la schermata finale di Game Over e mostra i punti
         const elGameOverUi = document.getElementById('game-over-ui');
         const elPuntiFinali = document.getElementById('txt-punti-finali');
         
@@ -556,75 +689,160 @@ function animate() {
     }
 
 
-    // movimwenti del braccio con i comandi
-    const vRot = braccioInferiore.rotation.z;
-    const vRotS = braccioSuperiore.rotation.z;
+    // Movimenti del braccio e della base
+    // Salviamo le rotazioni attuali per il rollback in caso di collisione col tavolo
+    const vRotBase = gruppoBase.rotation.y;
+    const vRotInf = braccioInferiore.rotation.x;
+    const vRotSup = braccioSuperiore.rotation.x;
 
-    if (tasti.ArrowLeft)  baseRobot.rotation.y += 0.04;
-    if (tasti.ArrowRight) baseRobot.rotation.y -= 0.04;
-    if (tasti.ArrowUp)    braccioInferiore.rotation.z += 0.03;
-    if (tasti.ArrowDown)  braccioInferiore.rotation.z -= 0.03;
-    if (tasti.KeyW)       braccioSuperiore.rotation.z += 0.04;
-    if (tasti.KeyS)       braccioSuperiore.rotation.z -= 0.04;
+    // Rotazione della base a destra e sinistra (Asse Y globale)
+    if (tasti.ArrowLeft)  gruppoBase.rotation.y += 0.04;
+    if (tasti.ArrowRight) gruppoBase.rotation.y -= 0.04;
+    
+    // Piegamento delle braccia avanti e indietro (Asse X locale dei perni)
+    if (tasti.ArrowUp)    braccioInferiore.rotation.x += 0.03;
+    if (tasti.ArrowDown)  braccioInferiore.rotation.x -= 0.03;
+    if (tasti.KeyW)       braccioSuperiore.rotation.x += 0.04;
+    if (tasti.KeyS)       braccioSuperiore.rotation.x -= 0.04;
 
-    braccioInferiore.rotation.z = Math.max(-1.8, Math.min(1.8, braccioInferiore.rotation.z));
-    braccioSuperiore.rotation.z = Math.max(-2.4, Math.min(2.4, braccioSuperiore.rotation.z));
+    // Limiti di inclinazione
+    braccioInferiore.rotation.x = Math.max(-1.8, Math.min(1.8, braccioInferiore.rotation.x));
+    braccioSuperiore.rotation.x = Math.max(-2.4, Math.min(2.4, braccioSuperiore.rotation.x));
 
-    // controllo per far si che lo snodo e la mano del braccio non possano scendere aldilà del tavolo
-    calamita.getWorldPosition(posizioneCalamitaMondo);
+    // Calcolo esatto del punto di presa
+    // Calcolo della posizione della mano e dello snodo per far si che non possano oltrepassare la superfice del tavolo
+    posizioneCalamitaMondo.set(0, 0.85, 0); 
+    calamita.localToWorld(posizioneCalamitaMondo);
     snodoCentrale.getWorldPosition(posizioneSnodoMondo);
-    if (posizioneCalamitaMondo.y < 0.35 || posizioneSnodoMondo.y < 0.30 ) {
-        braccioInferiore.rotation.z = vRot;
-        braccioSuperiore.rotation.z = vRotS;
+    
+    // Siccome ora le dita sporgono verso l'alto, abbasso la soglia del tavolo per non far bloccare il braccio troppo presto
+    if (posizioneCalamitaMondo.y < 0.20 || posizioneSnodoMondo.y < 0.30 ) {
+        gruppoBase.rotation.y = vRotBase;
+        braccioInferiore.rotation.x = vRotInf;
+        braccioSuperiore.rotation.x = vRotSup;
     }
 
+    const tempoAttuale = clock.getElapsedTime();
+
     if (giocoAvviato) {
+        // Movimento sul tavolo delle palline libere
         bersagli.forEach(b => {
             b.position.x += b.userData.velocita * b.userData.dirX;
             b.position.z += b.userData.velocita * b.userData.dirZ;
             
-            // Rimbalzi sui bordi del tavolo
             if (Math.abs(b.position.x) > 4.5) b.userData.dirX *= -1;
             if (Math.abs(b.position.z) > 4.5) b.userData.dirZ *= -1;
 
-            // Rimbalzo sulla base del braccio robotico al centro
             const distDallaBase = Math.sqrt(b.position.x ** 2 + b.position.z ** 2);
-            const raggioBaseRobot = 0.9; 
-            const distanzaMinima = raggioBaseRobot + b.userData.raggioCollisione;
-
-            if (distDallaBase < distanzaMinima) {
+            if (distDallaBase < 0.9 + b.userData.raggioCollisione) {
                 // Inverte la direzione della pallina (rimbalzo)
                 b.userData.dirX *= -1;
                 b.userData.dirZ *= -1;
-                
+
                 // Sposta leggermente la pallina fuori per non farla incastrare nel frame successivo
                 b.position.x += b.userData.velocita * b.userData.dirX * 1.5;
                 b.position.z += b.userData.velocita * b.userData.dirZ * 1.5;
             }
         });
-    }
 
-    // Controllo delle collisioni con ciascuna pallina per verificare la presa
-    if (giocoAvviato) {
-        bersagli.forEach((b, index) => {
-            const distanza = posizioneCalamitaMondo.distanceTo(b.position);
-            if (distanza < (b.userData.raggioCollisione + 0.3)) {
-                punteggio++;
-                tempoRimasto = Math.min(30.0, tempoRimasto + 6.0);
+        // Controllo della presa e pulizia globale
+        if (bersagliPresi.length === 0) {
+            for (let i = bersagli.length - 1; i >= 0; i--) {
+                const b = bersagli[i];
+                const distanza = posizioneCalamitaMondo.distanceTo(b.position);
+                
+                if (distanza < (b.userData.raggioCollisione + 0.35)) {
+                    punteggio++;
+                    tempoRimasto = Math.min(30.0, tempoRimasto + 6.0);
 
-                // Animazione di chiusura della pinza per la presa
-                dita.forEach(d => d.rotation.z = -Math.PI / 3.25);
+                    // La pallina presa andrà verso le dita
+                    b.userData.faseAnimazione = 'attrazione';
+                    
+                   // Tutte le altre si fermano e aspettano per svanire contemporaneamente
+                    bersagli.forEach(altraPallina => {
+                        if (altraPallina !== b) {
+                            altraPallina.userData.faseAnimazione = 'attesa_sparizione'; 
+                        }
+                        bersagliPresi.push(altraPallina);
+                    });
+                    
+                    // Svuoto l'array delle palline in movimento
+                    bersagli = [];
 
-                // Riapre la pinza dopo 150 millisecondi 
-                setTimeout(() => {
-                    dita.forEach(d => d.rotation.z = -Math.PI / 2);
-                }, 150);
+                    dita.forEach(d => {
+                        // Apertura morbida verso l'esterno
+                        new TWEEN.Tween(d.position, true).to({ x: 0.2, y: 0.025}, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+                        new TWEEN.Tween(d.rotation, true).to({ z: -Math.PI / 1.2 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+                        
+                        // Chiusura morbida (ritorno alla posizione base)
+                        setTimeout(() => {
+                            new TWEEN.Tween(d.position, true).to({ x: 0.12, y: 0.05 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+                            new TWEEN.Tween(d.rotation, true).to({ z: -Math.PI / 1.5 }, 70).easing(TWEEN.Easing.Quadratic.Out).start();
+                        }, 600);
+                    });
 
-                scene.remove(b);
-
-                generaBersaglio();
+        
+                    
+                    break; // Uscita dal loop per evitare di prendere due palline nello stesso istante
+                }
             }
-        });
+        }
+
+        // Animazione di assorbimento e sparizione sincronizzata
+        let ricaricaTavolo = false;
+
+        for (let i = bersagliPresi.length - 1; i >= 0; i--) {
+            const b = bersagliPresi[i];
+            
+            if (b.userData.faseAnimazione === 'attesa_sparizione') {
+                // Le palline non catturate restano immobili sul posto aspettando il loro turno
+            } 
+            else if (b.userData.faseAnimazione === 'sparizione' || b.userData.faseAnimazione === 'assorbimento') {
+                
+                // Solo la pallina catturata si muove seguendo la mano, le altre svaniscono ferme
+                if (b.userData.faseAnimazione === 'assorbimento') {
+                    b.position.copy(posizioneCalamitaMondo-5);
+                }
+                
+                // Rimpicciolimento simultaneo per tutte le palline
+                b.scale.multiplyScalar(0.80);
+                
+                if (b.scale.x < 0.05) {
+                    scene.remove(b);
+                    bersagliPresi.splice(i, 1);
+                    if (b.userData.faseAnimazione === 'assorbimento') {
+                        ricaricaTavolo = true; 
+                    }
+                }
+            } 
+            else if (b.userData.faseAnimazione === 'attrazione') {
+                // Vola dritta fra le dita
+                b.position.lerp(posizioneCalamitaMondo, 0.4);
+                if (b.position.distanceTo(posizioneCalamitaMondo) < 0.1) {
+                    b.userData.faseAnimazione = 'incollata';
+                    b.userData.tempoIncollatura = tempoAttuale;
+                }
+            } 
+            else if (b.userData.faseAnimazione === 'incollata') {
+                // Rimane incollata in mezzo alla pinza
+                b.position.copy(posizioneCalamitaMondo);
+                
+                if (tempoAttuale - b.userData.tempoIncollatura > 0.3) {
+                    b.userData.faseAnimazione = 'assorbimento';
+                    
+                    // Nello stesso esatto momento in cui la pallina presa viene assorbita le altre iniziano a svanire
+                    bersagliPresi.forEach(p => {
+                        if (p.userData.faseAnimazione === 'attesa_sparizione') {
+                            p.userData.faseAnimazione = 'sparizione';
+                        }
+                    });
+                }
+            } 
+        }
+        // Rigenera le palline per continuare a giocare
+        if (ricaricaTavolo) {
+            generaBersaglio();
+        }
     }
 
     controls.update();

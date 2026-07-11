@@ -26,43 +26,43 @@
     </script>
 
     <div id="pannello-ui">
-        <h3 id="titolo-ui">PANNELLO DI CONTROLLO</h3>
+        <h3 id="titolo-ui">CONTROL PANEL</h3>
         <div id="statistiche">
-            <strong>Punti:</strong> <span id="txt-punti">0</span> | 
-            <strong>Tempo:</strong> <span id="txt-tempo">30.0</span>s
+            <strong>Score:</strong> <span id="txt-punti">0</span> | 
+            <strong>Time:</strong> <span id="txt-tempo">30.0</span>s
         </div>
         
         <button id="btn-start" style="width: 100%; margin-top: 10px; padding: 8px; font-weight: bold; background-color: #00ffcc; color: #000; border: none; border-radius: 4px; cursor: pointer; font-family: inherit;">
-            START GIOCO
+            START
         </button>
 
         <button id="btn-stop" class="hidden" style="width: 100%; margin-top: 10px; padding: 8px; font-weight: bold; background-color: #ff3333; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-family: inherit;">
-            STOP GIOCO
+            STOP
         </button>
 
         <div id="game-over-ui" class="hidden" style="margin-top: 15px; text-align: center;">
             <h2 class="game-over-title">GAME OVER</h2>
-            <strong>Punti finali:</strong> <span id="txt-punti-finali">0</span><br><br>
+            <strong>Final score:</strong> <span id="txt-punti-finali">0</span><br><br>
             <button onclick="window.location.reload()" style="width: 100%; padding: 8px; font-weight: bold; background-color: #00ffcc; color: #000; border: none; border-radius: 4px; cursor: pointer; font-family: inherit;">
-                GIOCA ANCORA
+                RESTART
             </button>
         </div>
 
         <hr class="separatore">
 
         <div id="diff-ui" class="sezione-ui">
-            <label><strong>Difficoltà:</strong></label><br>
+            <label><strong>Difficulty:</strong></label><br>
             <div class="gruppo-radio">
-                <label><input type="radio" name="diff" value="facile" checked> Facile</label><br>
-                <label><input type="radio" name="diff" value="medio"> Medio</label><br>
-                <label><input type="radio" name="diff" value="difficile"> Difficile</label>
+                <label><input type="radio" name="diff" value="facile" checked> Easy</label><br>
+                <label><input type="radio" name="diff" value="medio"> Medium</label><br>
+                <label><input type="radio" name="diff" value="difficile"> Hard</label>
             </div>
         </div>
 
         <hr class="separatore">
 
         <div id="theme-ui" class="sezione-ui">
-            <label><strong>Set Colori (Tema):</strong></label><br>
+            <label><strong>Theme:</strong></label><br>
             <div class="gruppo-radio">
                 <label><input type="radio" name="tema" value="cyberpunk" checked> Cyberpunk</label><br>
                 <label><input type="radio" name="tema" value="industrial"> Industrial</label><br>
@@ -71,25 +71,25 @@
         </div>
         </div> <div id="istruzioni-overlay">
         <div class="box-istruzioni">
-            <h2>COME GIOCARE</h2>
-            <p>Usa i comandi della tastiera per muovere il braccio robotico e accalappiare la sferetta impazzita prima che scada il tempo!</p>
+            <h2>HOW TO PLAY</h2>
+            <p>Use the keyboard controls to move the robotic arm and catch the runaway ball before time runs out!</p>
             
             <table class="tabella-comandi">
                 <tr>
-                    <td><strong>Freccia DESTRA / SINISTRA</strong></td>
-                    <td>Ruota la base del robot</td>
+                    <td><strong>RIGHT / LEFT Arrow</strong></td>
+                    <td>Rotate the robot's base</td>
                 </tr>
                 <tr>
-                    <td><strong>Freccia SU / GIÙ</strong></td>
-                    <td>Muove il braccio inferiore</td>
+                    <td><strong>UP / DOWN Arrow</strong></td>
+                    <td>Moves the lower arm</td>
                 </tr>
                 <tr>
-                    <td><strong>Tasto W / S</strong></td>
-                    <td>Muove il braccio superiore</td>
+                    <td><strong>W / S key/strong></td>
+                    <td>Moves the upper arm</td>
                 </tr>
             </table>
             
-            <p style="color: #00ffcc; margin-top: 20px; font-weight: bold;">Seleziona la difficoltà e il tema nel pannello a sinistra, poi clicca su START per iniziare!</p>
+            <p style="color: #00ffcc; margin-top: 20px; font-weight: bold;">Select the difficulty level and theme in the panel on the left, then click START to begin!</p>
         </div>
     </div>
     </div> <script type="module" src="main.js"></script>
