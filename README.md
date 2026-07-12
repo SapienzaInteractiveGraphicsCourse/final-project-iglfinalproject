@@ -1,7 +1,9 @@
 # Interactive graphics final project - CyberNeon Claw
 
 This is the repository of the final project made for the exam of **Interactive graphics**
+
 Author: **Luca Adamo**
+
 student ID: **1987858**
 
 The project is a 3d application, a simulation of a **robotic arm** where the goal of the user is to make more points as possible. The game can be done with three different difficulties:
