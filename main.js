@@ -142,11 +142,12 @@ const matRobot = new THREE.MeshStandardMaterial({
 
 // Materiale per dettagli braccio robotico
 const matMetalloChiaro = new THREE.MeshStandardMaterial({ 
-    color: 0xBEC7CC,       
-    metalness: 0.5,        
-    roughness: 0.2,        
-    emissive: 0x101214,    
-    emissiveIntensity: 0.4
+    color: 0xE5E8EA,  
+    normalMap: texNormalRobot,           
+    normalScale: new THREE.Vector2(0.15, 0.15),  
+    roughnessMap: texRoughnessRobot,
+    metalness: 0.8
+    
 });
 
 // materiale del tavolo
