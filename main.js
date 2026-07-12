@@ -163,11 +163,10 @@ const matTavolo = new THREE.MeshStandardMaterial({
 const matSferetta = new THREE.MeshStandardMaterial({ 
     map: texColorPallaCyber,
     normalMap: texNormalPallaCyber,
-    normalScale: new THREE.Vector2(0.2, 0.2),
+    normalScale: new THREE.Vector2(1.6, 1.6),
     roughnessMap: texRoughPallaCyber,
     color: 0xffffff, // Bianco di base così non altera i colori originali della texture delle palline
-    metalness: 0.1,
-    roughness: 0.3  
+    metalness: 0.5
 });
 
 
@@ -268,7 +267,7 @@ function costruisciPaliNeon() {
 
         // Luce omnidirezionale associata all'angolo
         const lucePalo = new THREE.PointLight(coloreNeon, 5, 15);
-        lucePalo.position.set(pos.x, altezzaNeon / 2, pos.z);
+        lucePalo.position.set(pos.x, altezzaNeon / 24, pos.z);
         gruppoNeonVerticali.add(lucePalo);
         luciNeonVerticali.push(lucePalo);
     });
